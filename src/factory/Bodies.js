@@ -19,6 +19,12 @@ var Body = require('../body/Body');
 var Bounds = require('../geometry/Bounds');
 var Vector = require('../geometry/Vector');
 
+var decomp = null;
+if (typeof window !== 'undefined' && window.decomp)
+    decomp = window.decomp;
+else
+    try { decomp = require( 'poly-decomp' ); } catch(ex) { /* optional */ }
+
 (function() {
 
     /**
@@ -213,7 +219,7 @@ var Vector = require('../geometry/Vector');
         removeCollinear = typeof removeCollinear !== 'undefined' ? removeCollinear : 0.01;
         minimumArea = typeof minimumArea !== 'undefined' ? minimumArea : 10;
 
-        if (!window.decomp) {
+        if (!decomp) {
             Common.log('Bodies.fromVertices: poly-decomp.js required. Could not decompose vertices. Fallback to convex hull.', 'warn');
         }
 
@@ -226,7 +232,7 @@ var Vector = require('../geometry/Vector');
             vertices = vertexSets[v];
             isConvex = Vertices.isConvex(vertices);
 
-            if (isConvex || !window.decomp) {
+            if (isConvex || !decomp) {
                 if (isConvex) {
                     vertices = Vertices.clockwiseSort(vertices);
                 } else {

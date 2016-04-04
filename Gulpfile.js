@@ -87,7 +87,7 @@ gulp.task('watch', function() {
         entries: ['src/module/main.js'],
         standalone: 'Matter',
         plugin: [watchify]
-    });
+    }).ignore( 'poly-decomp' );
 
     var bundle = function() {
         gutil.log('Updated bundle build/matter-dev.js');
@@ -224,7 +224,9 @@ var build = function(options) {
         .pipe(replace("version = 'master'", "version = '" + options.version + "'"))
         .pipe(through2.obj(function(file, enc, next){
             browserify(file.path, { standalone: 'Matter' })
+                .ignore( 'poly-decomp' )
                 .bundle(function(err, res){
+                    if (err) throw err;
                     file.contents = res;
                     next(null, file);
                 });
