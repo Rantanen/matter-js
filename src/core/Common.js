@@ -218,18 +218,21 @@ module.exports = Common;
         // http://stackoverflow.com/questions/221294/how-do-you-get-a-timestamp-in-javascript
         // https://gist.github.com/davidwaterston/2982531
 
-        var performance = window.performance || {};
+        var now = function() { return +(new Date()); };
+        if (typeof window !== 'undefined' && window.performance) {
 
-        performance.now = (function() {
-            return performance.now    ||
-            performance.webkitNow     ||
-            performance.msNow         ||
-            performance.oNow          ||
-            performance.mozNow        ||
-            function() { return +(new Date()); };
-        })();
-              
-        return performance.now();
+            var perfNow =
+                performance.now         ||
+                performance.webkitNow   ||
+                performance.msNow       ||
+                performance.oNow        ||
+                performance.mozNow;
+
+            if (perfNow)
+                now = now.bind( window.performance );
+        }
+
+        return now();
     };
 
     
